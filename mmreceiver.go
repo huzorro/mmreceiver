@@ -37,9 +37,7 @@ import (
 //	<command>sync_mo_resp</command>
 //	<result>0</result>
 //</response>
-type mmRequests struct {
-	reqs mmrequest `xml:"request`
-}
+
 type mmrequest struct {
 	XMLName   xml.Name `xml:"request"`
 	id        string   `xml:"id"`
@@ -66,7 +64,7 @@ func mmReceiver(r *http.Request, w http.ResponseWriter, db *sql.DB, log *log.Log
 		log.Println("mm receive message failed:", err)
 		return http.StatusBadRequest, "request failed"
 	} else {
-		var msg mmRequests
+		var msg mmrequest
 
 		if err := xml.Unmarshal(data, &msg); err != nil {
 			log.Println("mm parse message failed:", err)
