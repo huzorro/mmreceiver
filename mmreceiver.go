@@ -110,7 +110,7 @@ func postRequest(reqURL string, data []byte) ([]byte, error) {
 }
 
 func postMessage(w http.ResponseWriter) {
-	msg := `
+	msg []byte := `
 	<?xml version="1.0" encoding="utf-8"?>
 	<request>
 	        <id>14092209191300001</id>
