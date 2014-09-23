@@ -130,12 +130,11 @@ func postMessage(w http.ResponseWriter) {
 	</request>
 	`)
 	reply, err := postRequest("http://42.62.0.188:10087/mmReceiver", msg)
-	log.Printf("receive response:", string(reply))
+	log.Printf("receive response: %s", string(reply))
 	if err != nil {
 		http.Error(w, "post request failed", http.StatusBadRequest)
-		return
 	} else {
-		log.Printf("receive response:", string(reply))
+		w.Write(reply)
 	}
 
 }
