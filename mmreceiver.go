@@ -37,6 +37,9 @@ import (
 //	<command>sync_mo_resp</command>
 //	<result>0</result>
 //</response>
+type mmRequests struct {
+	reqs mmrequest `xml:"request`
+}
 type mmrequest struct {
 	XMLName   xml.Name `xml:"request"`
 	id        string   `xml:"id"`
@@ -58,11 +61,12 @@ type mmrequest struct {
 func mmReceiver(r *http.Request, w http.ResponseWriter, db *sql.DB, log *log.Logger) (int, string) {
 	// Process message
 	data, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
 	if err != nil {
 		log.Println("mm receive message failed:", err)
 		return http.StatusBadRequest, "request failed"
 	} else {
-		var msg mmrequest
+		var msg mmRequests
 
 		if err := xml.Unmarshal(data, &msg); err != nil {
 			log.Println("mm parse message failed:", err)
@@ -75,7 +79,7 @@ func mmReceiver(r *http.Request, w http.ResponseWriter, db *sql.DB, log *log.Log
 			defer stmtIn.Close()
 
 			// _, err = stmtIn.Exec(spid, srctermid, linkid, citycode, cmd, desttermid, fee, serviceid, time)
-			res, err := stmtIn.Exec(msg.gateway, msg.from, msg.to, msg.msg, msg.linkid)
+			res, err := stmtIn.Exec(msg.reqs.gateway, msg.reqs.from, msg.reqs.to, msg.reqs.msg, msg.reqs.linkid)
 
 			if err != nil {
 				panic(err.Error())
@@ -85,9 +89,9 @@ func mmReceiver(r *http.Request, w http.ResponseWriter, db *sql.DB, log *log.Log
 				panic(err.Error())
 			}
 			log.Printf("receive mm: %s", string(data))
-			log.Printf("<%d> INSERT INTO mms_forward(spcode, srctermid, desttermid, msgcontent, linkid) VALUES('%s', '%s', '%s', '%s', '%s')", rowId, msg.gateway, msg.from, msg.to, msg.msg, msg.linkid)
+			log.Printf("<%d> INSERT INTO mms_forward(spcode, srctermid, desttermid, msgcontent, linkid) VALUES('%s', '%s', '%s', '%s', '%s')", rowId, msg.reqs.gateway, msg.reqs.from, msg.reqs.to, msg.reqs.msg, msg.reqs.linkid)
 
-			return http.StatusOK, fmt.Sprintf("<response><id>%s</id><command>sync_mo_resp</command><result>0</result></response>", msg.id)
+			return http.StatusOK, fmt.Sprintf("<response><id>%s</id><command>sync_mo_resp</command><result>0</result></response>", msg.reqs.id)
 		}
 	}
 
