@@ -129,7 +129,7 @@ func postMessage(w http.ResponseWriter) {
 	        <t>20140922 09:19:12</t>
 	</request>
 	`)
-	reply, err := postRequest("http://42.62.0.188:10087/mmReceiver", msg)
+	reply, err := postRequest(":10087/mmReceiver", msg)
 	log.Printf("receive response: %s", string(reply))
 	if err != nil {
 		http.Error(w, "post request failed", http.StatusBadRequest)
