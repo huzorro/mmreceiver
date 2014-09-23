@@ -110,7 +110,7 @@ func postRequest(reqURL string, data []byte) ([]byte, error) {
 }
 
 func postMessage(w http.ResponseWriter) {
-	msg := []byte(`
+	msg := `
 	<?xml version="1.0" encoding="utf-8"?>
 	<request>
 	        <id>14092209191300001</id>
@@ -128,8 +128,10 @@ func postMessage(w http.ResponseWriter) {
 	        <spid>mms01</spid>
 	        <t>20140922 09:19:12</t>
 	</request>
-	`)
-	data, err := xml.Marshal(&msg)
+	`
+	msgbytes := []byte(msg)
+
+	data, err := xml.Marshal(&msgbytes)
 	if err != nil {
 		http.Error(w, "xml Marshal failed", http.StatusBadRequest)
 		return
