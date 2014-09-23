@@ -131,7 +131,7 @@ func postMessage(w http.ResponseWriter) {
 		http.Error(w, "xml Marshal failed", http.StatusBadRequest)
 		return
 	}
-	reply, err := postRequest("http://:10087/mmReceiver", data)
+	reply, err := postRequest("42.62.0.188:10087/mmReceiver", data)
 	log.Printf("receive response:", string(reply))
 	if err != nil {
 		http.Error(w, "post request failed", http.StatusBadRequest)
@@ -155,7 +155,7 @@ func main() {
 	mtn.Map(logger)
 
 	mtn.Get("/mmRequest", postMessage)
-	mtn.Post("mmReceiver", mmReceiver)
+	mtn.Post("/mmReceiver", mmReceiver)
 	// mtn.Get("/mrReview", mrReivew)
 	http.ListenAndServe(":10087", mtn)
 	// mtn.Run()
