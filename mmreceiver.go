@@ -39,6 +39,7 @@ import (
 //</response>
 
 type mmrequest struct {
+	head      string
 	XMLName   xml.Name `xml:"request"`
 	id        string   `xml:"id"`
 	command   string   `xml:"command`
