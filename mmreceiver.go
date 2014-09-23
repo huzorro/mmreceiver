@@ -40,7 +40,7 @@ import (
 
 type mmRequests struct {
 	XMLName xml.Name `xml:"request"`
-	reqs    mmrequest
+	mmrequest
 }
 type mmrequest struct {
 	id        string `xml:"id"`
