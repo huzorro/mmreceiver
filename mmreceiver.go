@@ -39,7 +39,6 @@ import (
 //</response>
 
 type mmrequest struct {
-	head      string
 	XMLName   xml.Name `xml:"request"`
 	id        string   `xml:"id"`
 	command   string   `xml:"command`
@@ -87,7 +86,8 @@ func mmReceiver(r *http.Request, w http.ResponseWriter, db *sql.DB, log *log.Log
 			if err != nil {
 				panic(err.Error())
 			}
-			log.Printf("receive mm: %s", string(data))
+			log.Printf("receive xml: %s", string(data))
+			log.Printf("receive struct: %s", msg)
 			log.Printf("<%d> INSERT INTO mms_forward(spcode, srctermid, desttermid, msgcontent, linkid) VALUES('%s', '%s', '%s', '%s', '%s')", rowId, msg.gateway, msg.from, msg.to, msg.msg, msg.linkid)
 
 			return http.StatusOK, fmt.Sprintf("<response><id>%s</id><command>sync_mo_resp</command><result>0</result></response>", msg.id)
@@ -129,7 +129,7 @@ func postMessage(w http.ResponseWriter) {
 	        <t>20140922 09:19:12</t>
 	</request>
 	`
-	data, err := xml.Marshal(msg)
+	data, err := xml.Marshal(&msg)
 	if err != nil {
 		http.Error(w, "xml Marshal failed", http.StatusBadRequest)
 		return
