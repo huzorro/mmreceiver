@@ -40,20 +40,20 @@ import (
 
 type mmrequest struct {
 	XMLName   xml.Name `xml:"request"`
-	id        string   `xml:"id"`
-	command   string   `xml:"command`
-	operator  string   `xml:"operator`
-	mtype     string   `xml:"type"`
-	gateway   string   `xml:"gateway"`
-	msgid     string   `xml:"msgid"`
-	from      string   `xml:"from"`
-	to        string   `xml:"to"`
-	serviceid string   `xml:"serviceid"`
-	msgfmt    string   `xml:"msgfmt"`
-	msg       string   `xml:"msg"`
-	linkid    string   `xml:"linkid"`
-	spid      string   `xml:"spid"`
-	t         string   `xml:"t"`
+	Id        string   `xml:"id"`
+	Command   string   `xml:"command`
+	Operator  string   `xml:"operator`
+	Mtype     string   `xml:"type"`
+	Gateway   string   `xml:"gateway"`
+	Msgid     string   `xml:"msgid"`
+	From      string   `xml:"from"`
+	To        string   `xml:"to"`
+	Serviceid string   `xml:"serviceid"`
+	Msgfmt    string   `xml:"msgfmt"`
+	Msg       string   `xml:"msg"`
+	Linkid    string   `xml:"linkid"`
+	Spid      string   `xml:"spid"`
+	T         string   `xml:"t"`
 }
 
 func mmReceiver(r *http.Request, w http.ResponseWriter, db *sql.DB, log *log.Logger) (int, string) {
@@ -77,7 +77,7 @@ func mmReceiver(r *http.Request, w http.ResponseWriter, db *sql.DB, log *log.Log
 			defer stmtIn.Close()
 
 			// _, err = stmtIn.Exec(spid, srctermid, linkid, citycode, cmd, desttermid, fee, serviceid, time)
-			res, err := stmtIn.Exec(msg.gateway, msg.from, msg.to, msg.msg, msg.linkid)
+			res, err := stmtIn.Exec(msg.Gateway, msg.From, msg.To, msg.Msg, msg.Linkid)
 
 			if err != nil {
 				panic(err.Error())
@@ -88,9 +88,9 @@ func mmReceiver(r *http.Request, w http.ResponseWriter, db *sql.DB, log *log.Log
 			}
 			log.Printf("receive xml: %s", string(data))
 			log.Printf("receive struct: %s", msg)
-			log.Printf("<%d> INSERT INTO mms_forward(spcode, srctermid, desttermid, msgcontent, linkid) VALUES('%s', '%s', '%s', '%s', '%s')", rowId, msg.gateway, msg.from, msg.to, msg.msg, msg.linkid)
+			log.Printf("<%d> INSERT INTO mms_forward(spcode, srctermid, desttermid, msgcontent, linkid) VALUES('%s', '%s', '%s', '%s', '%s')", rowId, msg.Gateway, msg.From, msg.To, msg.Msg, msg.Linkid)
 
-			return http.StatusOK, fmt.Sprintf("<response><id>%s</id><command>sync_mo_resp</command><result>0</result></response>", msg.id)
+			return http.StatusOK, fmt.Sprintf("<response><id>%s</id><command>sync_mo_resp</command><result>0</result></response>", msg.Id)
 		}
 	}
 
