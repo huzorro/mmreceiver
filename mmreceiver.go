@@ -38,22 +38,25 @@ import (
 //	<result>0</result>
 //</response>
 
+type mmRequests struct {
+	XMLName xml.Name `xml:"request"`
+	reqs    mmrequest
+}
 type mmrequest struct {
-	XMLName   xml.Name `xml:"request"`
-	id        string   `xml:"id"`
-	command   string   `xml:"command`
-	operator  string   `xml:"operator`
-	mtype     string   `xml:"type"`
-	gateway   string   `xml:"gateway"`
-	msgid     string   `xml:"msgid"`
-	from      string   `xml:"from"`
-	to        string   `xml:"to"`
-	serviceid string   `xml:"serviceid"`
-	msgfmt    string   `xml:"msgfmt"`
-	msg       string   `xml:"msg"`
-	linkid    string   `xml:"linkid"`
-	spid      string   `xml:"spid"`
-	t         string   `xml:"t"`
+	id        string `xml:"id"`
+	command   string `xml:"command`
+	operator  string `xml:"operator`
+	mtype     string `xml:"type"`
+	gateway   string `xml:"gateway"`
+	msgid     string `xml:"msgid"`
+	from      string `xml:"from"`
+	to        string `xml:"to"`
+	serviceid string `xml:"serviceid"`
+	msgfmt    string `xml:"msgfmt"`
+	msg       string `xml:"msg"`
+	linkid    string `xml:"linkid"`
+	spid      string `xml:"spid"`
+	t         string `xml:"t"`
 }
 
 func mmReceiver(r *http.Request, w http.ResponseWriter, db *sql.DB, log *log.Logger) (int, string) {
@@ -64,7 +67,7 @@ func mmReceiver(r *http.Request, w http.ResponseWriter, db *sql.DB, log *log.Log
 		log.Println("mm receive message failed:", err)
 		return http.StatusBadRequest, "request failed"
 	} else {
-		var msg mmrequest
+		var msg mmRequests
 
 		if err := xml.Unmarshal(data, &msg); err != nil {
 			log.Println("mm parse message failed:", err)
