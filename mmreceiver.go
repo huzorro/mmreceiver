@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"database/sql"
+	"encoding/base64"
 	"encoding/xml"
 	"fmt"
 	"github.com/codegangsta/martini"
@@ -75,9 +76,13 @@ func mmReceiver(r *http.Request, w http.ResponseWriter, db *sql.DB, log *log.Log
 				panic(err.Error())
 			}
 			defer stmtIn.Close()
-
+			decodeMsg, err := base64.StdEncoding.DecodeString(msg.Msg)
+			if err != nil {
+				log.Printf("%s decode failed by base64", msg.Msg)
+				panic(err.Error())
+			}
 			// _, err = stmtIn.Exec(spid, srctermid, linkid, citycode, cmd, desttermid, fee, serviceid, time)
-			res, err := stmtIn.Exec(msg.Gateway, msg.From, msg.To, msg.Msg, msg.Linkid)
+			res, err := stmtIn.Exec(msg.Gateway, msg.From, msg.To, string(decodeMsg), msg.Linkid)
 
 			if err != nil {
 				panic(err.Error())
@@ -88,7 +93,7 @@ func mmReceiver(r *http.Request, w http.ResponseWriter, db *sql.DB, log *log.Log
 			}
 			log.Printf("receive xml: %s", string(data))
 			log.Printf("receive struct: %s", msg)
-			log.Printf("<%d> INSERT INTO mms_forward(spcode, srctermid, desttermid, msgcontent, linkid) VALUES('%s', '%s', '%s', '%s', '%s')", rowId, msg.Gateway, msg.From, msg.To, msg.Msg, msg.Linkid)
+			log.Printf("<%d> INSERT INTO mms_forward(spcode, srctermid, desttermid, msgcontent, linkid) VALUES('%s', '%s', '%s', '%s', '%s')", rowId, msg.Gateway, msg.From, msg.To, string(decodeMsg), msg.Linkid)
 
 			return http.StatusOK, fmt.Sprintf("<response><id>%s</id><command>sync_mo_resp</command><result>0</result></response>", msg.Id)
 		}
@@ -123,7 +128,7 @@ func postMessage(w http.ResponseWriter) {
 	        <to>10669501</to>
 	        <serviceid>115103</serviceid>
 	        <msgfmt>0</msgfmt>
-	        <msg>1</msg>
+	        <msg>ZEJmQ1lY</msg>
 	        <linkid>55877283390400855976</linkid>
 	        <spid>mms01</spid>
 	        <t>20140922 09:19:12</t>
